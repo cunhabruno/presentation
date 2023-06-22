@@ -1840,24 +1840,59 @@ $notesWidthPercent: 25%;
  * ZOOM PLUGIN
  *********************************************/
 
-.zoomed .reveal *,
-.zoomed .reveal *:before,
-.zoomed .reveal *:after {
-	backface-visibility: visible !important;
-}
+ .zoomed .reveal *,
+ .zoomed .reveal *:before,
+ .zoomed .reveal *:after {
+	 backface-visibility: visible !important;
+ }
+ 
+ .zoomed .reveal .progress,
+ .zoomed .reveal .controls {
+	 opacity: 0;
+ }
+ 
+ .zoomed .reveal .roll span {
+	 background: none;
+ }
+ 
+ .zoomed .reveal .roll span:after {
+	 visibility: hidden;
+ }
 
-.zoomed .reveal .progress,
-.zoomed .reveal .controls {
-	opacity: 0;
-}
+ /*********************************************
+ * FOLDER ICONS
+ *********************************************/
 
-.zoomed .reveal .roll span {
-	background: none;
-}
+ .file-tree {
+	list-style-type: none;
+	padding-left: 20px;
+  }
+  
+  .file-tree .folder::before {
+	content: "\f07b"; /* Unicode for folder icon */
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	margin-right: 5px;
+  }
+  
+  .file-tree .file::before {
+	content: "\f15b"; /* Unicode for file icon */
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	margin-right: 5px;
+  }
+  
+  .icon-wrapper {
+	display: inline-flex;
+	align-items: center;
+	font-size: 24px;
+  }
 
-.zoomed .reveal .roll span:after {
-	visibility: hidden;
-}
+  .vs-code-icon {
+	width: 1em;
+	height: 1em;
+	vertical-align: middle;
+  }
 
 
 /*********************************************

@@ -1,40 +1,409 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
-		<title>reveal.js</title>
+    <title>reveal.js</title>
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" />
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+			<img src="assets/playwright-logo.svg" style="height: 180px; margin: 0 auto 4rem auto; background: transparent;" class="demo-logo">
+			<h3>Playwright Boilerplate</h3>
+			<p>
+				<small>An overview of the E2E test framework used by QE team</small>
+			</p>
+		</section>
+        <section data-auto-animate>
+          <h2 data-id="code-title">Scripts</h2>
+		  <span class="icon-wrapper">
+			<img class="vs-code-icon" src="assets/file_type_json.svg">
+			 package.json
+		  </span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-json" data-trim data-line-numbers="|10-14|10-11"><script type="text/template">
+						{
+							"name": "playwright-boilerplate",
+							"version": "1.0.0",
+							"license": "MIT",
+							"scripts": {
+							  "lint": "eslint src/ --fix",
+							  "prepare": "husky install",
+							  "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+							  "show-report": "npx playwright show-report",
+							  "test": "npx playwright test",
+							  "test-chrome": "yarn test --project=chrome",
+							  "test-debug-chrome": "PWDEBUG=1 yarn test-chrome",
+							  "test-docker": "docker-compose --env-file ./.env run --rm playwright",
+							  "test-docker-chrome": "yarn test-docker yarn test-chrome",
+							  "update-snapshots-chrome": "yarn test-chrome --update-snapshots",
+							  "update-snapshots-chrome-docker": "yarn test-docker-chrome --update-snapshots"
+							},
+							"dependencies": {
+							  "@playwright/test": "^1.35.0",
+							  "@types/node": "^16.9.1",
+							  "@typescript-eslint/eslint-plugin": "^4.31.0",
+							  "@typescript-eslint/parser": "^4.31.0",
+							  "dotenv": "^16.0.3",
+							  "eslint": "^7.32.0",
+							  "eslint-config-prettier": "^8.8.0",
+							  "eslint-plugin-playwright": "^0.4.0",
+							  "husky": "^7.0.0",
+							  "prettier": "^2.8.7",
+							  "typescript": "^4.4.3"
+							}
+						  }						  
+					</script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <h2 data-id="code-title">Config file</h2>
+		  <span class="icon-wrapper">
+			<img class="vs-code-icon" src="assets/file_type_typescript_official.svg">
+			 playwright.config.ts
+		  </span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-typescript" data-trim data-line-numbers="|24,26-33|32|25"><script type="text/template">
+						import { PlaywrightTestConfig } from '@playwright/test'
+						import * as dotenv from 'dotenv'
+						dotenv.config()
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+						const config: PlaywrightTestConfig = {
+						  outputDir: './test-output/test-results',
+						  testMatch: 'foo.spec.ts',
+						  testIgnore: 'failure.spec.ts',
+						  expect: {
+						    timeout: 30000,
+						  },
+						  timeout: 120000,
+						  retries: process.env.CI ? 2 : 0,
+						  use: {
+						    baseURL: 'https://www.saucedemo.com',
+						    viewport: {
+						      width: 1366,
+						      height: 768,
+						    },
+						    screenshot: 'only-on-failure',
+						    video: 'on',
+						    trace: 'on',
+						  },
+						  projects: [
+						    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+						    {
+						      name: 'chrome',
+						      use: {
+						        browserName: 'chromium',
+						        storageState: 'playwright/.auth/user.json',
+						      },
+						      dependencies: ['setup'],
+						    },
+						    {
+						      name: 'firefox',
+						      use: {
+						        browserName: 'firefox',
+						        storageState: 'playwright/.auth/user.json',
+						      },
+						      dependencies: ['setup'],
+						    },
+						    {
+						      name: 'webkit',
+						      use: {
+						        browserName: 'webkit',
+						        storageState: 'playwright/.auth/user.json',
+						      },
+						      dependencies: ['setup'],
+						    },
+						  ],
+						  reporter: [['list'], ['html', { open: 'never' }]],
+						}
+						export default config						  
+					</script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <h2 data-id="code-title">Setup spec</h2>
+		  <span class="icon-wrapper">
+			<img class="vs-code-icon" src="assets/file_type_typescript_official.svg">
+			 auth.setup.ts
+		  </span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-typescript" data-trim data-line-numbers="|1,7|8,9"><script type="text/template">
+						import { test as setup } from '@playwright/test'
+						import { standardUser } from '../resources/test-data'
+						import { SauceLabsApp } from '../pages/sauce-labs-app'
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+						const authFile = 'playwright/.auth/user.json'
+
+						setup('authenticate', async ({ page }) => {
+						  const sauceLabsApp = new SauceLabsApp(page)
+						  await sauceLabsApp.loginPage.login(standardUser)
+						  await page.context().storageState({ path: authFile })
+						})
+					</script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <h2 data-id="code-title">Login page POM</h2>
+		  <span class="icon-wrapper">
+			<img class="vs-code-icon" src="assets/file_type_typescript_official.svg">
+			 login-page.ts
+		  </span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-typescript" data-trim data-line-numbers="|14-17|21-25"><script type="text/template">
+						import { Locator, Page } from '@playwright/test'
+						import { AbstractPage } from '../abstract-page'
+						import { UserCredentials } from '../../types'
+						import { InventoryPage } from '../inventory/inventory-page'
+						
+						export class LoginPage extends AbstractPage {
+						  readonly userNameInput: Locator
+						  readonly passwordIput: Locator
+						  readonly loginButton: Locator
+						  readonly homePage: InventoryPage
+						
+						  constructor(page: Page) {
+								super(page)
+								this.userNameInput = page.locator('#user-name')
+								this.passwordIput = page.locator('#password')
+								this.loginButton = page.locator('#login-button')
+								this.homePage = new InventoryPage(page)
+						  }
+						
+						  async login(userCredentials: UserCredentials): Promise<void> {
+								await this.page.goto('/', { waitUntil: 'networkidle' })
+								await this.userNameInput.fill(userCredentials.userName)
+								await this.passwordIput.fill(userCredentials.password)
+								await this.loginButton.click()
+								await this.homePage.primaryHeader.main.waitFor()
+						  }
+						}							
+					</script></code></pre>
+        </section>
+        <section data-auto-animate>
+			<h2 data-id="code-title">storage state</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_typescript_official.svg">
+			   auth.setup.ts
+			</span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-typescript" data-trim data-line-numbers="5,10"><script type="text/template">
+						import { test as setup } from '@playwright/test'
+						import { standardUser } from '../resources/test-data'
+						import { SauceLabsApp } from '../pages/sauce-labs-app'
+
+						const authFile = 'playwright/.auth/user.json'
+
+						setup('authenticate', async ({ page }) => {
+						  const sauceLabsApp = new SauceLabsApp(page)
+						  await sauceLabsApp.loginPage.login(standardUser)
+						  await page.context().storageState({ path: authFile })
+						})
+					</script></code></pre>
+        </section>
+        <section data-auto-animate>
+			<h2 data-id="code-title">Sample spec</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_typescript_official.svg">
+			   foo.spec.ts
+			</span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-typescript" data-trim data-line-numbers="|3"><script type="text/template">
+				  import { expect } from '@playwright/test'
+				  import { test } from '../fixtures/sauce-labs-test-fixture'
+				  test('basic test', async ({ sauceLabsApp }) => {
+					await sauceLabsApp.inventoryPage.goto()
+					await expect(sauceLabsApp.inventoryPage.primaryHeader.main).toContainText(
+					  'Swag Labs',
+					)
+				  })
+						</script></code></pre>
+        </section>
+        <section data-auto-animate>
+			<h2 data-id="code-title">Sample test fixture</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_typescript_official.svg">
+			  SAUCE-LABS-TEST-FIXTURE.TS
+			</span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-typescript" data-trim data-line-numbers="|8"><script type="text/template">
+			import { test as base } from '@playwright/test'
+			import { SauceLabsApp } from '../pages/sauce-labs-app'
+			
+			export const test = base.extend<{
+			  sauceLabsApp: SauceLabsApp
+			}>({
+			  sauceLabsApp: async ({ page }, use) => {
+				const sauceLabsApp = new SauceLabsApp(page)
+				use(sauceLabsApp)
+			  },
+			})				  
+						</script></code></pre>
+        </section>
+        <section data-auto-animate>
+			<h2 data-id="code-title">show report script</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_json.svg">
+			   package.json
+			</span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-json" data-trim data-line-numbers="7"><script type="text/template">
+						  {
+							  ...
+							  "scripts": {
+								  "lint": "eslint src/ --fix",
+								  "prepare": "husky install",
+								  "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+								  "show-report": "npx playwright show-report",
+								  ...					  
+						</script></code></pre>
+        </section>
+        <section>
+          <a
+            href="https://playwright-report.s3.amazonaws.com/boilerplate-test-results/54/index.html"
+            target="_blank"
+            >Sample Playwright Report</a
+          >
+        </section>
+        <section data-auto-animate>
+			<h2 data-id="code-title">bitbucket pipelines</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_bitbucketpipeline.svg">
+			   bitbucket-pipelines.yml
+			</span>
+          <pre
+            data-id="code-animation"
+          ><code class="hljs language-yaml" data-trim data-line-numbers="|1|10-15|16-29|31-34|35-44"><script type="text/template">
+			image: mcr.microsoft.com/playwright:v1.35.0-focal
+			definitions:
+			  variables: &s3-variables
+				AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_S3
+				AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_S3
+				S3_BUCKET: "playwright-report/boilerplate-test-results/${BITBUCKET_BUILD_NUMBER}"
+				LOCAL_PATH: "./playwright-report"
+				AWS_DEFAULT_REGION: "us-east-1"
+				DELETE_FLAG: "true"
+			  dependencies: &install-dependencies
+				name: Install dependencies
+				caches:
+				  - node
+				script:
+				  - yarn
+			  steps:
+				- step: &test-chrome
+					name: boilerplate E2E Tests - Chrome
+					caches:
+					  - node
+					script:
+					  - yarn test --project=chrome
+					artifacts:
+					  - playwright-report/**
+					  - test-output/**
+					after-script:
+					  - pipe: atlassian/aws-s3-deploy:1.1.0
+						variables: *s3-variables
+					  - echo "Test results https://playwright-report.s3.amazonaws.com/boilerplate-test-results/${BITBUCKET_BUILD_NUMBER}/index.html"
+			pipelines:
+			  default:
+				- step: *install-dependencies
+				- parallel:
+					- step: *test-chrome
+			  custom:
+				boilerplate-deployment-test:
+				  - parallel:
+					- step:
+						name: boilerplate pipeline URL
+						script:
+						  - echo "Test triggered from ${PARENT_PIPELINE_URL}"
+					- step: *install-dependencies
+				  - parallel:
+					- step: *test-chrome				  
+						</script></code></pre>
+        </section>
+		<section data-auto-animate>
+			<h2 data-id="code-title">Simulate bitbucket pipelines environment</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_json.svg">
+			   package.json
+			</span>
+			<pre
+			  data-id="code-animation"
+			><code class="hljs language-json" data-trim data-line-numbers="3-6"><script type="text/template">
+							{
+								...
+								"test-docker": "docker-compose --env-file ./.env run --rm playwright",
+								"test-docker-chrome": "yarn test-docker yarn test-chrome",
+								"update-snapshots-chrome": "yarn test-chrome --update-snapshots",
+								"update-snapshots-chrome-docker": "yarn test-docker-chrome --update-snapshots"
+								...					  
+						  </script></code></pre>
+		  </section>
+		  <section data-auto-animate>
+			<h2 data-id="code-title">Simulate bitbucket pipelines environment</h2>
+			<span class="icon-wrapper">
+			  <img class="vs-code-icon" src="assets/file_type_docker.svg">
+			   docker-compose.yml
+			</span>
+			<pre
+			  data-id="code-animation"
+			><code class="hljs language-yaml" data-trim data-line-numbers><script type="text/template">
+				services:
+				playwright:
+				  image: "mcr.microsoft.com/playwright:v1.35.0-focal"
+				  container_name: playwright
+				  volumes:
+					- ./:/app
+				  working_dir: /app
+				  environment:
+					- NPM_TOKEN=${NPM_TOKEN}
+				  command: bash -c "yarn test"
+				  network_mode: host
+				  # play with the below parameters to limit container resources and find flaky tests
+				  # cpus: 1
+				  # mem_limit: 1000m				  
+						  </script></code></pre>
+		  </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+        zoom: {
+          // Zoom level, 0.5 = 50% zoom
+          level: 0.5,
+
+          // Transition duration for zooming (in milliseconds)
+          duration: 300,
+        },
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      })
+    </script>
+  </body>
 </html>
