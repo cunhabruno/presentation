@@ -1615,6 +1615,10 @@ $overlayHeaderPadding: 5px;
 	min-height: 100%;
 }
 
+.code-wrapper {
+	border-radius: 15px;
+  }
+
 .reveal .hljs table {
 	margin: initial;
 }
@@ -1892,6 +1896,18 @@ $notesWidthPercent: 25%;
 	width: 1em;
 	height: 1em;
 	vertical-align: middle;
+  }
+
+  .water-mark-container {
+	position: fixed;
+	bottom: 10px;
+	left: 20px;
+	height: 10%;
+  }
+  
+  .water-mark-icon {
+	width: 100%;
+	height: 100%;
   }
 
 
