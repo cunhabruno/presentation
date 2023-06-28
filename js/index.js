@@ -55,4 +55,9 @@ Reveal.isReady = () => false;
 
 Reveal.VERSION = VERSION;
 
+Reveal.addEventListener('ready', function() {
+    var video = document.getElementById('video');
+    video.playbackRate = 2.5;
+  });
+
 export default Reveal;

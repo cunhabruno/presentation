@@ -34,6 +34,22 @@
             <small>An overview of the E2E test framework used by QE team</small>
           </p>
         </section>
+        <section>
+          <h2>How can I quickly get started?</h2>
+
+          <span class="icon-wrapper">
+            <img
+              class="vs-code-icon"
+              src="assets/file_type_bitbucketpipeline.svg"
+            />
+            <a
+              href="https://bitbucket.org/Adaptavist/playwright-boilerplate/src/master/"
+              >clone this repo and have fun!</a
+            >
+          </span>
+          <br />
+          <video id="video" data-autoplay data-loop loop src="assets/video-clone-repo.mp4" height="335" width="518"></video>
+        </section>
         <section data-auto-animate>
           <h2 data-id="code-title">Scripts</h2>
           <span class="icon-wrapper">
@@ -246,14 +262,12 @@
           <pre
             data-id="code-animation"
           ><code class="hljs language-typescript" data-trim data-line-numbers="|3"><script type="text/template">
-				  import { expect } from '@playwright/test'
-				  import { test } from '../fixtures/sauce-labs-test-fixture'
-				  test('basic test', async ({ sauceLabsApp }) => {
+				import { expect } from '@playwright/test'
+				import { test } from '../fixtures/sauce-labs-test-fixture'
+				test('basic test', async ({ sauceLabsApp }) => {
 					await sauceLabsApp.inventoryPage.goto()
-					await expect(sauceLabsApp.inventoryPage.primaryHeader.main).toContainText(
-					  'Swag Labs',
-					)
-				  })
+					await expect(sauceLabsApp.inventoryPage.primaryHeader.main).toContainText('Swag Labs')
+				})
 						</script></code></pre>
         </section>
         <section data-auto-animate>
